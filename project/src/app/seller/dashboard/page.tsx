@@ -29,7 +29,6 @@ interface SellerData {
 export default function SellerDashboardPage() {
   const [sellerData, setSellerData] = useState<SellerData | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   const supabase = createSupabaseBrowserClient();
@@ -41,8 +40,6 @@ export default function SellerDashboardPage() {
 
     const fetchData = async () => {
       try {
-        setLoading(true);
-
         // ✅ استخدام user من useAuth. إذا كان AuthContext لم يلتقط الجلسة بعد
         // (مثلاً مباشرة بعد إعادة تحميل الصفحة عقب التسجيل)، نتحقق مباشرة من
         // الجلسة عبر supabase.auth.getUser() قبل الحكم بأن المستخدم غير مسجل دخول.
@@ -90,8 +87,6 @@ export default function SellerDashboardPage() {
         
       } catch (err: any) {
         setError(err.message || 'حدث خطأ في تحميل البيانات');
-      } finally {
-        setLoading(false);
       }
     };
 

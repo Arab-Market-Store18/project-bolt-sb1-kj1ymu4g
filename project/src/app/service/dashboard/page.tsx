@@ -28,7 +28,6 @@ interface ServiceProviderData {
 export default function ServiceDashboardPage() {
   const [providerData, setProviderData] = useState<ServiceProviderData | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const supabase = createSupabaseBrowserClient();
@@ -40,8 +39,6 @@ export default function ServiceDashboardPage() {
 
     const fetchData = async () => {
       try {
-        setLoading(true);
-
         // تحقق من المستخدم — إذا لم يلتقط AuthContext الجلسة بعد نتحقق مباشرة
         let effectiveUser = user;
         if (!effectiveUser) {
@@ -87,8 +84,6 @@ export default function ServiceDashboardPage() {
 
       } catch (err: any) {
         setError(err.message || 'حدث خطأ في تحميل البيانات');
-      } finally {
-        setLoading(false);
       }
     };
 
