@@ -1,0 +1,32 @@
+/* تقليل الحركة للمستخدمين الذين يفضلون ذلك */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* تعديلات إضافية لتقليل الحركة */
+.reduce-motion .animate-spin,
+.reduce-motion .animate-ping,
+.reduce-motion .animate-pulse,
+.reduce-motion .animate-bounce,
+.reduce-motion .animate-accordion-down,
+.reduce-motion .animate-accordion-up {
+  animation: none !important;
+}
+
+/* إزالة تأثيرات التحويم */
+.reduce-motion button:hover,
+.reduce-motion a:hover,
+.reduce-motion .hover\\:* {
+  transform: none !important;
+  transition: none !important;
+}
+
+/* إزالة تأثيرات التمرير السلس */
+.reduce-motion {
+  scroll-behavior: auto !important;
+}

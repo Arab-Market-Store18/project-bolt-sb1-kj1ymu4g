@@ -1,0 +1,9 @@
+{
+  "template": "nextjs",
+  "entrypoint": "package.json",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install --legacy-peer-deps",
+  "framework": "nextjs",
+  "port": 5000
+}
