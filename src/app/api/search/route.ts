@@ -3,6 +3,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { performSearchUseCase } from '@/app/composition-root';
 import { SearchCriteria } from '@/domain/search/value-objects/SearchCriteria';
+import { cacheSearchResults, getSearchResultsCache, incrementSearchCounter } from '@/lib/redis/search-cache';
+import { getNetworkMode } from '@/lib/arabic-search-utils';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -31,15 +33,26 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const criteria = SearchCriteria.create({ query, page, limit });
+    // ============ 1. البحث في الكاش أولاً ============
+    const cacheKey = `${query}:p${page}`;
+    let results = await getSearchResultsCache(query, page);
 
-    // تمرير خيارات الترتيب والفلترة إلى Use Case
-    const results = await performSearchUseCase.execute(criteria, {
-      sort,
-      minPrice,
-      maxPrice,
-      limit,
-    });
+    // ============ 2. إذا لم نجد في الكاش، ابحث في قاعدة البيانات ============
+    if (!results) {
+      const criteria = SearchCriteria.create({ query, page, limit });
+      results = await performSearchUseCase.execute(criteria, {
+        sort,
+        minPrice,
+        maxPrice,
+        limit,
+      });
+
+      // ============ 3. حفظ النتائج في الكاش ============
+      await cacheSearchResults(query, page, results);
+    }
+
+    // ============ 4. تتبع البحث (لاستخراج البحث الشعبي لاحقاً) ============
+    await incrementSearchCounter(query);
 
     const executionTime = Date.now() - startTime;
 

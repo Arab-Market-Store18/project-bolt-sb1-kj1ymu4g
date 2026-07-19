@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
-import { ChevronLeft, BarChart3, Eye, Click, TrendingUp, Calendar } from 'lucide-react';
+import { ChevronLeft, BarChart3, Eye, Mouse, TrendingUp, Calendar } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'تفاصيل الإعلان - السوق العربي',
