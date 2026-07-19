@@ -18,6 +18,7 @@ import { CategoryPickerModal, SuggestedCategory } from "@/components/category-pi
 import { createSupabaseBrowserClient } from "@/lib/utils/supabase/client";
 import { validateFile } from "@/lib/utils/validation";
 import type { Product, Category } from "@/lib/types";
+import { getSubCategories } from "@/lib/utils/categories-converter";
 import imageCompression from 'browser-image-compression';
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
@@ -152,7 +153,7 @@ export function AddProductModal() {
       });
       
       if (!sellerId) {
-        toast.error('❌ خطأ: sellerId مفقود في data');
+        toast.error('��� خطأ: sellerId مفقود في data');
         console.error('data كاملة:', data);
       }
     }
@@ -246,19 +247,10 @@ export function AddProductModal() {
       if (videoPreview) { URL.revokeObjectURL(videoPreview); setVideoPreview(null); }
   }, [form, videoPreview]);
 
-  const fetchSubCategories = useCallback(async (parentId: number | null): Promise<Category[]> => {
-    try {
-      const query = supabase.from('categories').select('id, name, icon_name').eq('is_approved', true);
-      const finalQuery = parentId === null ? query.is('parent_id', null) : query.eq('parent_id', parentId);
-      const { data, error } = await finalQuery.order('name', { ascending: true });
-      if (error) throw error;
-      return data || [];
-    } catch (error: any) {
-      console.error("Error fetching sub-categories:", error.message || error);
-      toast.error("فشل في تحميل الأقسام الفرعية.");
-      return [];
-    }
-  }, [supabase]);
+  const fetchSubCategories = useCallback(async (parentId: string | null): Promise<Category[]> => {
+    // استخدم البيانات المحلية بدلاً من قاعدة البيانات
+    return getSubCategories(parentId);
+  }, []);
 
   const getSubCategoryDisplayName = useCallback((subCategory: any): string => {
       if (!subCategory) return "اختر فئة فرعية...";

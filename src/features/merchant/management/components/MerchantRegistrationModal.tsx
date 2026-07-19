@@ -27,6 +27,7 @@ import { Upload, Phone, Loader2, Plus, X, Eye, Store, Globe, User, Lock, Info, M
 import { CategoryPickerModal } from "@/components/category-picker-modal";
 import { createSupabaseBrowserClient } from "@/lib/utils/supabase/client";
 import { useAuth } from "@/context/AuthContext";
+import { getSubCategories } from "@/lib/utils/categories-converter";
 
 // Constants
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -165,35 +166,10 @@ export function MerchantRegistrationModal({
 
 
 
-  const fetchSubCategories = useCallback(async (parentId: number | null): Promise<Category[]> => {
-    // Return from cache if available
-    if (categoriesCache.length > 0) {
-      return categoriesCache.filter(c => c.parent_id === parentId);
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('id, name, icon_name, parent_id')
-        .order('name');
-
-      if (error) {
-        console.error("خطأ في جلب الفئات:", error);
-        toast.error("فشل في تحميل الأقسام.");
-        return [];
-      }
-
-      if (data) {
-        setCategoriesCache(data); // Cache the results
-        return data.filter(c => c.parent_id === parentId);
-      }
-      
-      return [];
-    } catch (error) {
-      console.error("استثناء في جلب الفئات:", error);
-      return [];
-    }
-  }, [supabase, categoriesCache]);
+  const fetchSubCategories = useCallback(async (parentId: string | null): Promise<Category[]> => {
+    // استخدم البيانات المحلية بدلاً من قاعدة البيانات
+    return getSubCategories(parentId);
+  }, []);
 
   // Get selected country
   const getSelectedCountry = useCallback(() => 
